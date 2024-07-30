@@ -8,11 +8,12 @@ app = Flask(__name__)
 
 # Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'uploads'
+BG_IMAGES_FOLDER = 'uploads/bg_images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload folder exists
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(BG_IMAGES_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # Function to check if a file is allowed
