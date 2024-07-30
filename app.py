@@ -34,10 +34,12 @@ def upload_file():
     now = datetime.datetime.now()
     current_timestamp = datetime.datetime.timestamp(now)
     folder_name = f"{image_file.filename.split('.')[0]}_{current_timestamp}"
-    img_file_path = os.path.join('', image_file.filename)
+    file_name, file_ext = image_file.filename.split(".")
+    img_file_path = os.path.join('', f"{file_name}_{current_timestamp}.{file_ext}")
 
     if background_image_file:
-        bg_img_file_path = os.path.join('uploads/bg_images/', background_image_file.filename)
+        bg_file_name, bg_file_ext = background_image_file.filename.split(".")
+        bg_img_file_path = os.path.join('uploads/bg_images/', f"{bg_file_name}_{current_timestamp}.{bg_file_ext}")
         background_image_file.save(bg_img_file_path)
 
     image_file.save(img_file_path)
