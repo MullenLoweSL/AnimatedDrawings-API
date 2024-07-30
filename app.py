@@ -40,6 +40,7 @@ def upload_file():
     if background_image_file:
         bg_file_name, bg_file_ext = background_image_file.filename.split(".")
         bg_img_file_path = os.path.join('uploads/bg_images/', f"{bg_file_name}_{current_timestamp}.{bg_file_ext}")
+        bg_img_name = f"{bg_file_name}_{current_timestamp}.{bg_file_ext}"
         background_image_file.save(bg_img_file_path)
 
     image_file.save(img_file_path)
@@ -48,12 +49,12 @@ def upload_file():
         if not four_leg_skeleton_flag:
             image_to_animation(img_fn=img_file_path, char_anno_dir=f"uploads/{folder_name}/",
                                motion_cfg_fn='examples/config/motion/dab.yaml',
-                               retarget_cfg_fn='examples/config/retarget/fair1_ppf.yaml', bg_image=background_image_file.filename if background_image_file else None)
+                               retarget_cfg_fn='examples/config/retarget/fair1_ppf.yaml', bg_image=bg_img_name if background_image_file else None)
         else:
             image_to_animation(img_fn=img_file_path, char_anno_dir=f"uploads/{folder_name}/",
                                motion_cfg_fn='examples/config/motion/zombie.yaml',
                                retarget_cfg_fn='examples/config/retarget/four_legs.yaml',
-                               bg_image=background_image_file.filename if background_image_file else None)
+                               bg_image=bg_img_name if background_image_file else None)
     except Exception as e:
         print(e)
 
