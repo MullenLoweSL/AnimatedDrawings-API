@@ -47,7 +47,7 @@ RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_pose_estimator.mar -P /home/torchserve/model-store/
 
 # Changed line: Adjusted path to reflect the correct location of config.properties
-COPY /torchserve/config.properties /home/torchserve/config.properties
+COPY config.properties /home/torchserve/config.properties
 
 # Combine apt-get commands and install additional dependencies
 RUN apt-get update && \
