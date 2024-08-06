@@ -45,7 +45,9 @@ RUN pip install glfw
 RUN mkdir -p /home/torchserve/model-store
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_detector.mar -P /home/torchserve/model-store/
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_pose_estimator.mar -P /home/torchserve/model-store/
-COPY /torchserve/config.properties /home/torchserve/config.properties  # Changed line: Adjusted path to reflect the correct location of config.properties
+
+# Changed line: Adjusted path to reflect the correct location of config.properties
+COPY /torchserve/config.properties /home/torchserve/config.properties
 
 # Combine apt-get commands and install additional dependencies
 RUN apt-get update && \
