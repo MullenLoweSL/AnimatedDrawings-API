@@ -18,6 +18,7 @@ RUN apt-get update && \
 
 RUN conda install python=3.8.13 -y
 
+
 # install python dependencies
 RUN pip install openmim
 RUN pip install torch==2.0.0
@@ -34,15 +35,16 @@ WORKDIR /
 RUN pip install mmpose==0.29.0
 RUN pip install torchvision==0.15.1  # solve torch version problem
 RUN pip install numpy==1.24.4  #solve numpy version problem
-RUN pip install glfw
 
 # prep torchserve
 RUN mkdir -p /home/torchserve/model-store
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_detector.mar -P /home/torchserve/model-store/
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_pose_estimator.mar -P /home/torchserve/model-store/
-COPY config.properties /home/torchserve/config.properties
+COPY torchserve/config.properties /home/torchserve/config.properties
 
-# Combine apt-get commands and install additional dependencies
+WORKDIR /app
+COPY . /app
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     build-essential \
@@ -68,8 +70,31 @@ RUN apt-get update && \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
+
+# Install system dependencies
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y python3-opencv && rm -rf /var/lib/apt/lists/*
+    apt-get install --no-install-recommends -y \
+    python3-opencv \
+    xvfb \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables
+ENV FLASK_APP=app.py \
+    DISPLAY=:99
+
+# Install Python dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Copy application files
+COPY . /app
+
+# Copy supervisord configuration file
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+# Start supervisor when the container launches
+CMD ["/usr/bin/supervisord"]
 
 # starting command
-CMD /opt/conda/bin/torchserve --start --ts-config /home/torchserve/config.properties --disable-token-auth && sleep infinity
+#CMD /opt/conda/bin/torchserve --start --ts-config /home/torchserve/config.properties --disable-token-auth && python app.py
