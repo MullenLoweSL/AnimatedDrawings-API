@@ -20,7 +20,12 @@ RUN conda install python=3.8.13 -y
 
 # install python dependencies
 RUN pip install openmim
-RUN pip install torch==2.0.0
+
+# Increase timeout and retry pip install torch
+RUN pip install torch==2.0.0 --timeout=120 || \
+    pip install torch==2.0.0 --timeout=120 || \
+    pip install torch==2.0.0 --timeout=120
+
 RUN mim install mmcv-full==1.7.0
 RUN pip install mmdet==2.27.0
 RUN pip install torchserve
