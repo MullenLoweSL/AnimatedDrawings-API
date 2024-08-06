@@ -2,24 +2,23 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from image_to_annotations import image_to_annotations
-from annotations_to_animation import annotations_to_animation
+from examples.annotations_to_animation import custom_annotations_to_animation
+from examples.image_to_annotations import image_to_annotations
 from pathlib import Path
 import logging
 import sys
 from pkg_resources import resource_filename
 
 
-def image_to_animation(img_fn: str, char_anno_dir: str, motion_cfg_fn: str, retarget_cfg_fn: str):
+def image_to_animation(img_fn: str, char_anno_dir: str, motion_cfg_fn: str, retarget_cfg_fn: str, bg_image: str = None):
     """
     Given the image located at img_fn, create annotation files needed for animation.
     Then create animation from those animations and motion cfg and retarget cfg.
     """
     # create the annotations
     image_to_annotations(img_fn, char_anno_dir)
-
     # create the animation
-    annotations_to_animation(char_anno_dir, motion_cfg_fn, retarget_cfg_fn)
+    custom_annotations_to_animation(char_anno_dir, motion_cfg_fn, retarget_cfg_fn, bg_image)
 
 
 if __name__ == '__main__':

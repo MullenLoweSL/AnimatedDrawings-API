@@ -119,22 +119,36 @@ def image_to_annotations(img_fn: str, out_dir: str) -> None:
 
     # use them to build character skeleton rig
     skeleton = []
-    skeleton.append({'loc' : [round(x) for x in (kpts[11]+kpts[12])/2], 'name': 'root'          , 'parent': None})
-    skeleton.append({'loc' : [round(x) for x in (kpts[11]+kpts[12])/2], 'name': 'hip'           , 'parent': 'root'})
-    skeleton.append({'loc' : [round(x) for x in (kpts[5]+kpts[6])/2  ], 'name': 'torso'         , 'parent': 'hip'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[0]             ], 'name': 'neck'          , 'parent': 'torso'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[6]             ], 'name': 'right_shoulder', 'parent': 'torso'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[8]             ], 'name': 'right_elbow'   , 'parent': 'right_shoulder'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[10]            ], 'name': 'right_hand'    , 'parent': 'right_elbow'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[5]             ], 'name': 'left_shoulder' , 'parent': 'torso'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[7]             ], 'name': 'left_elbow'    , 'parent': 'left_shoulder'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[9]             ], 'name': 'left_hand'     , 'parent': 'left_elbow'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[12]            ], 'name': 'right_hip'     , 'parent': 'root'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[14]            ], 'name': 'right_knee'    , 'parent': 'right_hip'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[16]            ], 'name': 'right_foot'    , 'parent': 'right_knee'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[11]            ], 'name': 'left_hip'      , 'parent': 'root'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[13]            ], 'name': 'left_knee'     , 'parent': 'left_hip'})
-    skeleton.append({'loc' : [round(x) for x in  kpts[15]            ], 'name': 'left_foot'     , 'parent': 'left_knee'})
+    skeleton.append({'loc': [round(x) for x in (kpts[11] + kpts[12]) / 2], 'name': 'root', 'parent': None})
+    skeleton.append({'loc': [round(x) for x in (kpts[11] + kpts[12]) / 2], 'name': 'hip', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in (kpts[5] + kpts[6]) / 2], 'name': 'torso', 'parent': 'hip'})
+    skeleton.append({'loc': [round(x) for x in kpts[0]], 'name': 'neck', 'parent': 'torso'})
+    skeleton.append({'loc': [round(x) for x in kpts[6]], 'name': 'right_shoulder', 'parent': 'torso'})
+    skeleton.append({'loc': [round(x) for x in kpts[8]], 'name': 'right_elbow', 'parent': 'right_shoulder'})
+    skeleton.append({'loc': [round(x) for x in kpts[10]], 'name': 'right_hand', 'parent': 'right_elbow'})
+    skeleton.append({'loc': [round(x) for x in kpts[5]], 'name': 'left_shoulder', 'parent': 'torso'})
+    skeleton.append({'loc': [round(x) for x in kpts[7]], 'name': 'left_elbow', 'parent': 'left_shoulder'})
+    skeleton.append({'loc': [round(x) for x in kpts[9]], 'name': 'left_hand', 'parent': 'left_elbow'})
+    skeleton.append({'loc': [round(x) for x in kpts[12]], 'name': 'right_hip', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[14]], 'name': 'right_knee', 'parent': 'right_hip'})
+    skeleton.append({'loc': [round(x) for x in kpts[16]], 'name': 'right_foot', 'parent': 'right_knee'})
+    skeleton.append({'loc': [round(x) for x in kpts[11]], 'name': 'left_hip', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[13]], 'name': 'left_knee', 'parent': 'left_hip'})
+    skeleton.append({'loc': [round(x) for x in kpts[15]], 'name': 'left_foot', 'parent': 'left_knee'})
+
+    # Adding the remaining fields
+    skeleton.append({'loc': [round(x) for x in kpts[11]], 'name': 'right_hip_b', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[12]], 'name': 'right_knee_b', 'parent': 'right_hip_b'})
+    skeleton.append({'loc': [round(x) for x in kpts[14]], 'name': 'right_foot_b', 'parent': 'right_knee_b'})
+    skeleton.append({'loc': [round(x) for x in kpts[11]], 'name': 'left_hip_b', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[13]], 'name': 'left_knee_b', 'parent': 'left_hip_b'})
+    skeleton.append({'loc': [round(x) for x in kpts[15]], 'name': 'left_foot_b', 'parent': 'left_knee_b'})
+    skeleton.append({'loc': [round(x) for x in kpts[11]], 'name': 'right_hip_f', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[12]], 'name': 'right_knee_f', 'parent': 'right_hip_f'})
+    skeleton.append({'loc': [round(x) for x in kpts[14]], 'name': 'right_foot_f', 'parent': 'right_knee_f'})
+    skeleton.append({'loc': [round(x) for x in kpts[11]], 'name': 'left_hip_f', 'parent': 'root'})
+    skeleton.append({'loc': [round(x) for x in kpts[13]], 'name': 'left_knee_f', 'parent': 'left_hip_f'})
+    skeleton.append({'loc': [round(x) for x in kpts[15]], 'name': 'left_foot_f', 'parent': 'left_knee_f'})
 
     # create the character config dictionary
     char_cfg = {'skeleton': skeleton, 'height': cropped.shape[0], 'width': cropped.shape[1]}
@@ -226,3 +240,4 @@ if __name__ == '__main__':
     img_fn = sys.argv[1]
     out_dir = sys.argv[2]
     image_to_annotations(img_fn, out_dir)
+
