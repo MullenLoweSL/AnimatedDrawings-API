@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 RUN conda install python=3.8.13 -y
 
-# install python dependencies
+# Install Python dependencies
 RUN pip install openmim
 
 # Increase timeout and retry pip install torch
@@ -30,7 +30,7 @@ RUN mim install mmcv-full==1.7.0
 RUN pip install mmdet==2.27.0
 RUN pip install torchserve
 
-# bugfix for xtcocoapi, an mmpose dependency
+# Bugfix for xtcocoapi, an mmpose dependency
 RUN git clone https://github.com/jin-s13/xtcocoapi.git
 WORKDIR xtcocoapi
 RUN pip install -r requirements.txt
@@ -41,11 +41,11 @@ RUN pip install torchvision==0.15.1  # solve torch version problem
 RUN pip install numpy==1.24.4  #solve numpy version problem
 RUN pip install glfw
 
-# prep torchserve
+# Prep torchserve
 RUN mkdir -p /home/torchserve/model-store
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_detector.mar -P /home/torchserve/model-store/
 RUN wget https://github.com/facebookresearch/AnimatedDrawings/releases/download/v0.0.1/drawn_humanoid_pose_estimator.mar -P /home/torchserve/model-store/
-COPY config.properties /home/torchserve/config.properties
+COPY /torchserve/config.properties /home/torchserve/config.properties  # Changed line: Adjusted path to reflect the correct location of config.properties
 
 # Combine apt-get commands and install additional dependencies
 RUN apt-get update && \
@@ -76,5 +76,5 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install --no-install-recommends -y python3-opencv && rm -rf /var/lib/apt/lists/*
 
-# starting command
+# Starting command
 CMD /opt/conda/bin/torchserve --start --ts-config /home/torchserve/config.properties --disable-token-auth && sleep infinity
