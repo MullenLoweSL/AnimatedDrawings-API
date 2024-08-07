@@ -26,3 +26,4 @@ examples/garlic_out
 torchserve/logs/
 
 .idea
+/venv
