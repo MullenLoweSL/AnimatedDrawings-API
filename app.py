@@ -81,6 +81,11 @@ def upload_file():
 def render_file(foldername, filename):
     return send_from_directory(UPLOAD_FOLDER, f"{foldername}/{filename}", as_attachment=True)
 
+# Route to serve MP4 files from the uploads directory
+@app.route('/uploads/<path:subfolder>/<filename>')
+def serve_video(subfolder, filename):
+    # return send_from_directory(f'uploads/{subfolder}', filename)
+    return send_from_directory(f'uploads/{subfolder}', filename, mimetype='video/mp4')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=80)
