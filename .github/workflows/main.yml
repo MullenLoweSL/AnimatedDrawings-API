@@ -1,29 +1,12 @@
-name: Deploy to Azure Container Instance
+name: Update Azure Container Instance
 
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types:
+      - dockerhub_build_complete
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Log in to DockerHub
-      run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-    - name: Build Docker image
-      run: docker build . -t sdharmarajah/animated-drawings:latest
-
-    - name: Push Docker image to DockerHub
-      run: docker push sdharmarajah/animated-drawings:latest
-
-  deploy:
-    needs: build
+  update-container:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,29 +18,16 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Deploy to Azure Container Instance
+    - name: Update Azure Container Instance
       run: |
-        if az container show --resource-group atlas --name animated-drawings-container-api; then
-          az container update \
-            --resource-group atlas \
-            --name animated-drawings-container-api \
-            --image sdharmarajah/animated-drawings:latest \
-            --cpu 4 \
-            --memory 8 \
-            --set dnsNameLabel=animated-drawings-container-api \
-            --set ports[0].port=80 \
-            --set registryCredentials[0].server=docker.io \
-            --set registryCredentials[0].username=${{ secrets.DOCKERHUB_USERNAME }} \
-            --set registryCredentials[0].password=${{ secrets.DOCKERHUB_PASSWORD }}
-        else
-          az container create \
-            --resource-group atlas \
-            --name animated-drawings-container-api \
-            --image sdharmarajah/animated-drawings:latest \
-            --cpu 4 \
-            --memory 8 \
-            --dns-name-label animated-drawings-container-api \
-            --ports 80 \
-            --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
-            --registry-password ${{ secrets.DOCKERHUB_PASSWORD }}
-        fi
+        az container delete --resource-group atlas --name animated-drawings-container-api --yes
+        az container create \
+          --resource-group atlas \
+          --name animated-drawings-container-api \
+          --image sdharmarajah/animated-drawings:latest \
+          --cpu 4 \
+          --memory 8 \
+          --dns-name-label animated-drawings-container-api \
+          --ports 80 \
+          --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
+          --registry-password ${{ secrets.DOCKERHUB_PASSWORD }}
