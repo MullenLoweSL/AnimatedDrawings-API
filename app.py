@@ -1,10 +1,21 @@
 import datetime
-
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 import os
 from examples.image_to_animation import image_to_animation
 
 app = Flask(__name__)
+
+# Allow specific origins
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://portal.azure.com",
+            "http://localhost:3000",
+            "http://localhost:5173"
+        ]
+    }
+})
 
 # Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'uploads'
