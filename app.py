@@ -6,9 +6,17 @@ from examples.image_to_animation import image_to_animation
 
 app = Flask(__name__)
 
-# Allow specific origins for the uploads route
+# Allow CORS for specific routes
 CORS(app, resources={
     r"/uploads/*": {
+        "origins": [
+            "https://portal.azure.com",
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "https://atlas-paint-mixer-mobile-webapp.vercel.app"
+        ]
+    },
+    r"/image_to_animation": {
         "origins": [
             "https://portal.azure.com",
             "http://localhost:3000",
