@@ -6,13 +6,14 @@ from examples.image_to_animation import image_to_animation
 
 app = Flask(__name__)
 
-# Allow specific origins
+# Allow specific origins for the uploads route
 CORS(app, resources={
-    r"/*": {
+    r"/uploads/*": {
         "origins": [
             "https://portal.azure.com",
             "http://localhost:3000",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "https://atlas-paint-mixer-mobile-webapp.vercel.app"
         ]
     }
 })
@@ -81,10 +82,9 @@ def upload_file():
 def render_file(foldername, filename):
     return send_from_directory(UPLOAD_FOLDER, f"{foldername}/{filename}", as_attachment=True)
 
-# Route to serve MP4 files from the uploads directory
+# Your route to serve video files
 @app.route('/uploads/<path:subfolder>/<filename>')
 def serve_video(subfolder, filename):
-    # return send_from_directory(f'uploads/{subfolder}', filename)
     return send_from_directory(f'uploads/{subfolder}', filename, mimetype='video/mp4')
 
 if __name__ == '__main__':
