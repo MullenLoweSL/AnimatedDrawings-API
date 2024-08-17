@@ -14,16 +14,35 @@ CORS(app, origins=[
     "https://atlas-paint-mixer-mobile-webapp.vercel.app"
 ])
 
+media_base_url = "https://mullenlowedemo.blob.core.windows.net/paint-mixer-public/"
 audio_mapper = {
-    0: "beat.mp3",
-    1: "loop.mp3",
-    2: "synth.mp3",
+    0: {
+        "url": media_base_url + "beat.mp3",
+        "description": "Beaty music"
+    },
+    1: {
+        "url": media_base_url + "loop.mp3",
+        "description": "Loop music"
+    },
+    2: {
+        "url": media_base_url + "synth.mp3",
+        "description": "Synth music"
+    }
 }
 
 background_mapper = {
-    0: "desert.png",
-    1: "jungle.png",
-    2: "lake.mp3",
+    0: {
+        "url": media_base_url + "jungle.png",
+        "description": "Jungle background"
+    },
+    1: {
+        "url": media_base_url + "lake.mp3",
+        "description": "Lake background"
+    },
+    2: {
+        "url": media_base_url + "desert.mp3",
+        "description": "Desert background"
+    }
 }
 
 # Add Content Security Policy (CSP) headers to all responses
@@ -54,6 +73,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/get_backgrounds', methods=['GET'])
+def return_backgrounds():
+    backgrounds = {key: background_mapper[key] for key in background_mapper}
+    return jsonify(backgrounds)
+
+@app.route('/get_audios', methods=['GET'])
+def return_audios():
+    audios = {key: audio_mapper[key] for key in audio_mapper}
+    return jsonify(audios)
 
 @app.route('/image_to_animation', methods=['POST'])
 def upload_file():
