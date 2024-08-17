@@ -14,6 +14,18 @@ CORS(app, origins=[
     "https://atlas-paint-mixer-mobile-webapp.vercel.app"
 ])
 
+audio_mapper = {
+    0: "beat.mp3",
+    1: "loop.mp3",
+    2: "synth.mp3",
+}
+
+background_mapper = {
+    0: "desert.png",
+    1: "jungle.png",
+    2: "lake.mp3",
+}
+
 # Add Content Security Policy (CSP) headers to all responses
 @app.after_request
 def add_security_headers(response):
