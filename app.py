@@ -6,25 +6,27 @@ from examples.image_to_animation import image_to_animation
 
 app = Flask(__name__)
 
-# Allow CORS for specific routes
-CORS(app, resources={
-    r"/uploads/*": {
-        "origins": [
-            "https://portal.azure.com",
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "https://atlas-paint-mixer-mobile-webapp.vercel.app"
-        ]
-    },
-    r"/image_to_animation": {
-        "origins": [
-            "https://portal.azure.com",
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "https://atlas-paint-mixer-mobile-webapp.vercel.app"
-        ]
-    }
-})
+# Allow CORS globally for all routes
+CORS(app, origins=[
+    "https://portal.azure.com",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://atlas-paint-mixer-mobile-webapp.vercel.app"
+])
+
+# Add Content Security Policy (CSP) headers to all responses
+@app.after_request
+def add_security_headers(response):
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "img-src 'self' data:; "
+        "media-src 'self'; "  # Assuming videos are served from the same domain
+        "script-src 'self'; "
+        "style-src 'self' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "frame-ancestors 'self';"
+    )
+    return response
 
 # Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'uploads'
@@ -83,7 +85,11 @@ def upload_file():
         if bg_img_file_path:
             os.remove(bg_img_file_path)
 
-    return jsonify({"message": "hello world", "url": request.url_root + f'uploads/{folder_name}/' + "video.mp4"})
+    # add cache busting parameter
+    return jsonify({
+        "message": "hello world", 
+        "url": request.url_root + f'uploads/{folder_name}/video.mp4?t={int(datetime.datetime.now().timestamp())}'
+    })
 
 
 @app.route('/uploads/<foldername>/<filename>', methods=['GET'])
