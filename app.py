@@ -36,11 +36,11 @@ background_mapper = {
         "description": "Jungle background"
     },
     1: {
-        "url": media_base_url + "lake.mp3",
+        "url": media_base_url + "lake.png",
         "description": "Lake background"
     },
     2: {
-        "url": media_base_url + "desert.mp3",
+        "url": media_base_url + "desert.png",
         "description": "Desert background"
     }
 }
