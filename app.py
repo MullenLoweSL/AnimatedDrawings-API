@@ -18,15 +18,21 @@ media_base_url = "https://mullenlowedemo.blob.core.windows.net/paint-mixer-publi
 audio_mapper = {
     0: {
         "url": media_base_url + "beat.mp3",
-        "description": "Beaty music"
+        "image": "https://mullenlowedemo.blob.core.windows.net/public/3-sri-lanka.png",
+        "title": "Beaty music",
+        "subtitle": "Beaty music subtitle",
     },
     1: {
         "url": media_base_url + "loop.mp3",
-        "description": "Loop music"
+        "image": "https://mullenlowedemo.blob.core.windows.net/public/3-sri-lanka.png",
+        "title": "Loop music",
+        "subtitle": "Loop music subtitle",
     },
     2: {
         "url": media_base_url + "synth.mp3",
-        "description": "Synth music"
+        "image": "https://mullenlowedemo.blob.core.windows.net/public/3-sri-lanka.png",
+        "title": "Synth music",
+        "subtitle": "Synth music subtitle",
     }
 }
 
