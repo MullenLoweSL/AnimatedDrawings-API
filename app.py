@@ -18,12 +18,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 audio_mapper = {
     0: "beat.mp3",
     1: "loop.mp3",
-    2: "test.mp3"
+    2: "synth.mp3"
 }
 
 background_mapper = {
-    0: "dest.png",
-    1: "background.png",
+    0: "forest-2.png",
+    1: "desert.png",
     2: "lake.png"
 }
 
