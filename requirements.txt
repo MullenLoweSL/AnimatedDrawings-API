@@ -1,18 +1,20 @@
 -e git+https://github.com/facebookresearch/AnimatedDrawings.git@981283a5a98905acabca25f707888a3eec47307e#egg=animated_drawings
-nvgpu
 blinker==1.8.2
 certifi==2024.7.4
 charset-normalizer==3.3.2
 click==8.1.7
+decorator==4.4.2
 Flask==2.3.2
 future==1.0.0
 glfw==2.5.5
 idna==3.7
 imageio==2.34.2
+imageio-ffmpeg==0.5.1
 itsdangerous==2.2.0
 Jinja2==3.1.4
 joblib==1.4.2
 MarkupSafe==2.1.5
+moviepy==1.0.3
 networkx
 numpy==1.24.4
 opencv-python==4.6.0.66
