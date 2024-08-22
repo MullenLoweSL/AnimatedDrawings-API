@@ -39,7 +39,7 @@ def upload_file():
     image_file = request.files.get('img')
     background_image_file = request.form.get('bg_img')
     audio_file = request.form.get('audio_file')
-    four_leg_skeleton_flag = request.args.get('four_leg_skeleton')
+    four_leg_skeleton_flag = request.form.get('four_leg_skeleton')
     bg_img_file_path = ""
     # Construct the file path to save the image
 
