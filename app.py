@@ -18,15 +18,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 audio_mapper = {
     0: "beat.mp3",
     1: "loop.mp3",
-    2: "test.mp3"
+    2: "synth.mp3"
 }
 
 background_mapper = {
-    0: "dest.png",
-    1: "background.png",
-    2: "lake.png"
+    0: "desert.png",
+    1: "forest-1.png",
+    2: "forest-2.png",
+    3: "jungle.png",
+    4: "lake.png"
 }
-
 
 # Function to check if a file is allowed
 def allowed_file(filename):
@@ -36,8 +37,8 @@ def allowed_file(filename):
 @app.route('/image_to_animation', methods=['POST'])
 def upload_file():
     image_file = request.files.get('img')
-    background_image_file = request.files.get('bg_img')
-    audio_file = request.files.get('audio_file')
+    background_image_file = request.form.get('bg_img')
+    audio_file = request.form.get('audio_file')
     four_leg_skeleton_flag = request.args.get('four_leg_skeleton')
     bg_img_file_path = ""
     # Construct the file path to save the image
