@@ -1,3 +1,4 @@
+import base64
 import datetime
 from flask import Flask, request, jsonify, send_from_directory
 import os
@@ -22,11 +23,9 @@ audio_mapper = {
 }
 
 background_mapper = {
-    0: "desert.png",
-    1: "forest-1.png",
-    2: "forest-2.png",
-    3: "jungle.png",
-    4: "lake.png"
+    0: "forest-2.png",
+    1: "desert.png",
+    2: "lake.png"
 }
 
 # Function to check if a file is allowed
@@ -36,24 +35,27 @@ def allowed_file(filename):
 
 @app.route('/image_to_animation', methods=['POST'])
 def upload_file():
-    image_file = request.files.get('img')
-    background_image_file = request.form.get('bg_img')
-    audio_file = request.form.get('audio_file')
-    four_leg_skeleton_flag = request.form.get('four_leg_skeleton')
+    data = request.json
+    image_base64 = data.get('img_base64')
+    background_image_file = data.get('bg_img')
+    audio_file = data.get('audio_file')
+    four_leg_skeleton_flag = data.get('four_leg_skeleton')
     bg_img_file_path = ""
-    # Construct the file path to save the image
 
-    # current date and time
+    # Decode the base64 string to an image file
+    image_data = base64.b64decode(image_base64)
     now = datetime.datetime.now()
-    current_timestamp = datetime.datetime.timestamp(now)
-    folder_name = f"{image_file.filename.split('.')[0]}_{current_timestamp}"
-    file_name, file_ext = image_file.filename.split(".")
-    img_file_path = os.path.join('', f"{file_name}_{current_timestamp}.{file_ext}")
+    current_timestamp = str(int(datetime.datetime.timestamp(now)))
+    folder_name = f"image_{current_timestamp}"
+    img_file_path = os.path.join('', f"{folder_name}.png")
+
+    with open(img_file_path, 'wb') as f:
+        f.write(image_data)
+
     if background_image_file:
         bg_img_file = background_mapper.get(int(background_image_file))
         bg_img_file_path = os.path.join(BG_IMAGES_FOLDER, bg_img_file)
 
-    image_file.save(img_file_path)
     try:
         if not four_leg_skeleton_flag:
             image_to_animation(img_fn=img_file_path, char_anno_dir=f"uploads/{folder_name}/",
@@ -66,8 +68,7 @@ def upload_file():
                                retarget_cfg_fn='examples/config/retarget/four_legs.yaml',
                                bg_image=bg_img_file_path if background_image_file else None)
 
-
-        #Audio adding part start
+        # Audio adding part start
         if audio_file:
             video_path = f"/home/root372/AnimatedDrawingApis/AnimatedDrawings-API/uploads/{folder_name}/video.mp4"
             audio_file = audio_mapper.get(int(audio_file))
