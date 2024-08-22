@@ -27,7 +27,6 @@ background_mapper = {
     2: "lake.png"
 }
 
-
 # Function to check if a file is allowed
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -36,9 +35,9 @@ def allowed_file(filename):
 @app.route('/image_to_animation', methods=['POST'])
 def upload_file():
     image_file = request.files.get('img')
-    background_image_file = request.files.get('bg_img')
-    audio_file = request.files.get('audio_file')
-    four_leg_skeleton_flag = request.args.get('four_leg_skeleton')
+    background_image_file = request.form.get('bg_img')
+    audio_file = request.form.get('audio_file')
+    four_leg_skeleton_flag = request.form.get('four_leg_skeleton')
     bg_img_file_path = ""
     # Construct the file path to save the image
 
