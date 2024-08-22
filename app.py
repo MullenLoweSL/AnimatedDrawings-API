@@ -22,11 +22,9 @@ audio_mapper = {
 }
 
 background_mapper = {
-    0: "desert.png",
-    1: "forest-1.png",
-    2: "forest-2.png",
-    3: "jungle.png",
-    4: "lake.png"
+    0: "forest-2.png",
+    1: "desert.png",
+    2: "lake.png"
 }
 
 # Function to check if a file is allowed
