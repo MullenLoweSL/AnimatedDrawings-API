@@ -69,10 +69,10 @@ def upload_file():
 
         #Audio adding part start
         if audio_file:
-            video_path = f"/home/root372/AnimatedDrawingApis/AnimatedDrawings-API/uploads/{folder_name}/video.mp4"
+            video_path = request.url_root + f'uploads/{folder_name}/' + "video.mp4"
             audio_file = audio_mapper.get(int(audio_file))
             audio_path = os.path.join(AUDIO_FOLDER, audio_file)
-            output_path = f"/home/root372/AnimatedDrawingApis/AnimatedDrawings-API/uploads/{folder_name}/video_with_audio.mp4"
+            output_path = request.url_root + f'uploads/{folder_name}/' + "video_with_audio.mp4"
 
             # Load video and audio files
             video_clip = VideoFileClip(video_path)
@@ -81,6 +81,7 @@ def upload_file():
             new_video_clip = video_clip.set_audio(audio_clip)
             # showing video clip
             new_video_clip.write_videofile(output_path)
+            return jsonify({"message": "hello world", "url": output_path})
 
         # Audio adding part end
     except Exception as e:
@@ -90,7 +91,7 @@ def upload_file():
         os.remove(img_file_path)
 
     return jsonify(
-        {"message": "hello world", "url": request.url_root + f'uploads/{folder_name}/' + "video_with_audio.mp4"})
+        {"message": "hello world", "url": request.url_root + f'uploads/{folder_name}/' + "video.mp4"})
 
 
 @app.route('/uploads/<foldername>/<filename>', methods=['GET'])
