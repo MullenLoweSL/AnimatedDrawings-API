@@ -9,8 +9,9 @@ app = Flask(__name__)
 # Configure the upload folder and allowed extensions
 UPLOAD_FOLDER = 'uploads'
 BG_IMAGES_FOLDER = 'uploads/bg_images'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 AUDIO_FOLDER = 'uploads/audio_files'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 # Ensure the upload folder exists
 os.makedirs(BG_IMAGES_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -58,8 +59,7 @@ def upload_file():
         if not four_leg_skeleton_flag:
             image_to_animation(img_fn=img_file_path, char_anno_dir=f"uploads/{folder_name}/",
                                motion_cfg_fn='examples/config/motion/dab.yaml',
-                               retarget_cfg_fn='examples/config/retarget/fair1_ppf.yaml',
-                               bg_image=bg_img_file_path if background_image_file else None)
+                               retarget_cfg_fn='examples/config/retarget/fair1_ppf.yaml', bg_image=bg_img_file_path if background_image_file else None)
         else:
             image_to_animation(img_fn=img_file_path, char_anno_dir=f"uploads/{folder_name}/",
                                motion_cfg_fn='examples/config/motion/zombie.yaml',
@@ -67,12 +67,12 @@ def upload_file():
                                bg_image=bg_img_file_path if background_image_file else None)
 
 
-        #Audio adding part start
+         #Audio adding part start
         if audio_file:
-            video_path = f"/home/root372/AnimatedDrawingApis/AnimatedDrawings-API/uploads/{folder_name}/video.mp4"
+            video_path = UPLOAD_FOLDER + f"/{folder_name}/video.mp4"
             audio_file = audio_mapper.get(int(audio_file))
             audio_path = os.path.join(AUDIO_FOLDER, audio_file)
-            output_path = f"/home/root372/AnimatedDrawingApis/AnimatedDrawings-API/uploads/{folder_name}/video_with_audio.mp4"
+            output_path = UPLOAD_FOLDER + f"/{folder_name}/video_with_audio.mp4"
 
             # Load video and audio files
             video_clip = VideoFileClip(video_path)
@@ -89,8 +89,7 @@ def upload_file():
     finally:
         os.remove(img_file_path)
 
-    return jsonify(
-        {"message": "hello world", "url": request.url_root + f'uploads/{folder_name}/' + "video_with_audio.mp4"})
+    return jsonify({"message": "hello world", "url": request.url_root + f'uploads/{folder_name}/' + "video_with_audio.mp4"})
 
 
 @app.route('/uploads/<foldername>/<filename>', methods=['GET'])
