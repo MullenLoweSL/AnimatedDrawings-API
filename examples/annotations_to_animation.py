@@ -67,7 +67,7 @@ def custom_annotations_to_animation(char_anno_dir: str, motion_cfg_fn: str, reta
             "CAMERA_POS": [0.1, 1.3, 2.7],
             "USE_MESA": True,
             "WINDOW_DIMENSIONS": [300, 400],
-            "BACKGROUND_IMAGE": f"uploads/bg_images/{bg_image}",
+            "BACKGROUND_IMAGE": f"{bg_image}",
         }
         mvc_cfg['view'] = view_dict
 
