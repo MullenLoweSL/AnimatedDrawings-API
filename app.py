@@ -16,10 +16,15 @@ AUDIO_FOLDER = "uploads/audio_files"
 os.makedirs(BG_IMAGES_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-audio_mapper = {0: "beat.mp3", 1: "loop.mp3", 2: "synth.mp3"}
+audio_mapper = {
+    0: "advertising.mp3",
+    1: "funk.mp3"
+}
 
-background_mapper = {0: "forest-2.png", 1: "desert.png", 2: "lake.png"}
-
+background_mapper = {
+    0: "forest-1.jpg",
+    1: "forest-2.png"
+}
 
 # Function to check if a file is allowed
 def allowed_file(filename):

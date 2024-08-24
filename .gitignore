@@ -27,4 +27,4 @@ torchserve/logs/
 
 .idea
 venv/
-uploads/
+# uploads/
