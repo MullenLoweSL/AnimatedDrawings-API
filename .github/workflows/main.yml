@@ -26,7 +26,7 @@ jobs:
           --name animated-drawings-container-api \
           --image sdharmarajah/animated-drawings:latest \
           --cpu 4 \
-          --memory 8 \
+          --memory 16 \
           --dns-name-label animated-drawings-container-api \
           --ports 80 \
           --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
