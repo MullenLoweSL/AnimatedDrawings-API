@@ -27,7 +27,7 @@ jobs:
           --image sdharmarajah/animated-drawings:latest \
           --cpu 6 \
           --memory 56 \
-          --gpu-count 1 \
+          --gpu count=1,sku=K80 \
           --dns-name-label animated-drawings-container-api \
           --ports 80 \
           --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
