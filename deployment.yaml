@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animated-drawings-container-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: animated-drawings-container-api
+  template:
+    metadata:
+      labels:
+        app: animated-drawings-container-api
+    spec:
+      containers:
+      - name: animated-drawings-container-api
+        image: sdharmarajah/animated-drawings:latest
+        resources:
+          limits:
+            cpu: "8"
+            memory: "32Gi"
+        ports:
+        - containerPort: 80

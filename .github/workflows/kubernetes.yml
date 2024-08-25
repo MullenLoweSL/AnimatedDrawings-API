@@ -1,0 +1,25 @@
+name: Update Kubernetes Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up kubectl
+      run: |
+        az aks get-credentials --resource-group atlas --name paint-mixer-kubernetes
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f ./deployment.yaml
