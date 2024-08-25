@@ -40,8 +40,8 @@ def upload_file():
         url = ""
         data = request.json
         image_base64 = data.get("img_base64")
-        background_image_file = data.get("bg_img")
-        audio_file = data.get("audio_file")
+        audio_id = data.get("audio_id")
+        bg_image_id = data.get("bg_image_id")
         four_leg_skeleton_flag = data.get("four_leg_skeleton")
         bg_img_file_path = ""
 
@@ -56,8 +56,8 @@ def upload_file():
         with open(img_file_path, "wb") as f:
             f.write(image_data)
 
-        if background_image_file:
-            bg_img_file = background_mapper.get(int(background_image_file))
+        if bg_image_id:
+            bg_img_file = background_mapper.get(int(bg_image_id))
             bg_img_file_path = os.path.join(BG_IMAGES_FOLDER, bg_img_file)
 
         if not four_leg_skeleton_flag:
@@ -66,7 +66,7 @@ def upload_file():
                 char_anno_dir=f"uploads/{folder_name}/",
                 motion_cfg_fn="examples/config/motion/dab.yaml",
                 retarget_cfg_fn="examples/config/retarget/fair1_ppf.yaml",
-                bg_image=(bg_img_file_path if background_image_file else None),
+                bg_image=(bg_img_file_path if bg_image_id else None),
             )
 
 
@@ -76,13 +76,13 @@ def upload_file():
                 char_anno_dir=f"uploads/{folder_name}/",
                 motion_cfg_fn="examples/config/motion/zombie.yaml",
                 retarget_cfg_fn="examples/config/retarget/four_legs.yaml",
-                bg_image=(bg_img_file_path if background_image_file else None),
+                bg_image=(bg_img_file_path if bg_image_id else None),
             )
 
             url = request.url_root + f"uploads/{folder_name}/" + "video.mp4"
         # Audio adding part start
-        if audio_file:
-            audio_file = audio_mapper.get(int(audio_file))
+        if audio_id:
+            audio_file = audio_mapper.get(int(audio_id))
             audio_path = os.path.join(AUDIO_FOLDER, audio_file)
             # Load video and audio files
             audio_clip = AudioFileClip(audio_path)
