@@ -25,7 +25,7 @@ jobs:
           --resource-group atlas \
           --name animated-drawings-container-api \
           --image sdharmarajah/animated-drawings:latest \
-          --cpu 8 \
+          --cpu 4 \
           --memory 32 \
           --dns-name-label animated-drawings-container-api \
           --ports 80 \
