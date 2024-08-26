@@ -37,7 +37,6 @@ jobs:
     - name: Create App Service Plan if Not Found
       if: ${{ env.app_service_plan_exists == 'false' }}
       run: |
-        echo "App Service Plan does not exist. Creating..."
         az appservice plan create \
           --name $APP_SERVICE_PLAN \
           --resource-group $RESOURCE_GROUP \
@@ -58,18 +57,16 @@ jobs:
     - name: Delete Web App if Exists
       if: ${{ env.web_app_exists == 'true' }}
       run: |
-        echo "Web App exists. Deleting..."
         az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
     
-    # Create Web App using a temporary runtime
+    # Create Web App without specifying any runtime or container settings
     - name: Create Web App
       run: |
-        echo "Creating Web App..."
         az webapp create \
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
           --name $WEB_APP_NAME \
-          --runtime "DOTNETCORE|3.1"  # Temporary Linux runtime to create the app
+          --os-type Linux  # Ensure it's Linux-based since it's for containers
 
     # Set Docker Image for the Web App
     - name: Set Docker Image for the Web App
