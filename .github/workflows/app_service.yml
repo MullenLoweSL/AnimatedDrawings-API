@@ -24,6 +24,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # Check if App Service Plan Exists
     - name: Check if App Service Plan Exists
       id: check-app-service-plan
       run: |
@@ -33,6 +34,7 @@ jobs:
           echo "app_service_plan_exists=false" >> $GITHUB_ENV
         fi
 
+    # Create App Service Plan if Not Found
     - name: Create App Service Plan if Not Found
       if: ${{ env.app_service_plan_exists == 'false' }}
       run: |
@@ -43,6 +45,7 @@ jobs:
           --sku $SKU \
           --is-linux
 
+    # Check if Web App Exists
     - name: Check if Web App Exists
       id: check-web-app
       run: |
@@ -52,12 +55,14 @@ jobs:
           echo "web_app_exists=false" >> $GITHUB_ENV
         fi
 
+    # Delete Web App if Exists
     - name: Delete Web App if Exists
       if: ${{ env.web_app_exists == 'true' }}
       run: |
         echo "Web App exists. Deleting..."
         az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
     
+    # Create Web App without specifying container at creation time
     - name: Create Web App
       run: |
         echo "Creating Web App..."
@@ -65,8 +70,9 @@ jobs:
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
           --name $WEB_APP_NAME \
-          --deployment-container-image-name ""  # Empty image during creation since we're using container config later
+          --os-type Linux  # Specifying the OS type without using the deprecated runtime flag
 
+    # Set Docker Image for the Web App
     - name: Set Docker Image for the Web App
       run: |
         az webapp config container set \
@@ -76,3 +82,8 @@ jobs:
           --docker-registry-server-url https://index.docker.io \
           --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
           --registry-password ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    # Restart Web App to apply configuration changes
+    - name: Restart Web App
+      run: |
+        az webapp restart --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP
