@@ -27,9 +27,7 @@ jobs:
           --name $WEB_APP_NAME \
           --resource-group $RESOURCE_GROUP \
           --docker-custom-image-name sdharmarajah/animated-drawings:latest \
-          --docker-registry-server-url https://index.docker.io \
-          --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
-          --registry-password ${{ secrets.DOCKERHUB_PASSWORD }}
+          --docker-registry-server-url https://index.docker.io
 
     # Restart Web App to apply configuration changes
     - name: Restart Web App
