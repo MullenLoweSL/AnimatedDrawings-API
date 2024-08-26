@@ -1,0 +1,35 @@
+name: Overwrite Azure Web App with New Docker Container
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      RESOURCE_GROUP: atlas
+      WEB_APP_NAME: animated-drawings-webapp-api2
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Set Docker Image for the Web App (Overwriting existing deployment)
+    - name: Set Docker Image for the Web App
+      run: |
+        az webapp config container set \
+          --name $WEB_APP_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --docker-custom-image-name sdharmarajah/animated-drawings:latest \
+          --docker-registry-server-url https://index.docker.io
+
+    # Restart Web App to apply configuration changes
+    - name: Restart Web App
+      run: |
+        az webapp restart --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP
