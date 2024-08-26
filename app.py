@@ -18,12 +18,29 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 audio_mapper = {
     0: "advertising.mp3",
-    1: "funk.mp3"
+    1: "classical.mp3",
+    2: "emotional.mp3",
+    3: "funk.mp3",
+    4: "sport.mp3"
 }
 
 background_mapper = {
-    0: "forest-1.jpg",
-    1: "forest-2.png"
+    0: "beach.png",
+    1: "castle.png",
+    2: "desert.png",
+    3: "forest.png",
+    4: "house.png",
+    5: "snow.png",
+    6: "space.png"
+}
+
+motion_mapper = {
+    0: "examples/config/motion/dab.yaml",
+    1: "examples/config/motion/jesse_dance.yaml",
+    2: "examples/config/motion/jumping_jacks.yaml",
+    3: "examples/config/motion/jumping.yaml",
+    4: "examples/config/motion/wave_hello.yaml",
+    5: "examples/config/motion/zombie.yaml"
 }
 
 # Function to check if a file is allowed
@@ -45,6 +62,9 @@ def upload_file():
         four_leg_skeleton_flag = data.get("four_leg_skeleton")
         bg_img_file_path = ""
 
+        motion_id = data.get("motion_id")
+        motion_cfg_fn = motion_mapper.get(int(motion_id))
+
         # Decode the base64 string to an image file
         image_data = base64.b64decode(image_base64)
         now = datetime.datetime.now()
@@ -64,7 +84,7 @@ def upload_file():
             image_to_animation(
                 img_fn=img_file_path,
                 char_anno_dir=f"uploads/{folder_name}/",
-                motion_cfg_fn="examples/config/motion/dab.yaml",
+                motion_cfg_fn=motion_cfg_fn,
                 retarget_cfg_fn="examples/config/retarget/fair1_ppf.yaml",
                 bg_image=(bg_img_file_path if bg_image_id else None),
             )
