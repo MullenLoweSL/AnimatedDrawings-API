@@ -13,7 +13,6 @@ jobs:
       APP_SERVICE_PLAN: animated-drawings-app-service-plan
       WEB_APP_NAME: animated-drawings-webapp-api
       SKU: P3v2
-      IS_LINUX: true
 
     steps:
     - name: Checkout code
@@ -62,7 +61,7 @@ jobs:
         echo "Web App exists. Deleting..."
         az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
     
-    # Create Web App without specifying a runtime or container configuration
+    # Create Web App without specifying container configuration
     - name: Create Web App
       run: |
         echo "Creating Web App..."
@@ -70,7 +69,7 @@ jobs:
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
           --name $WEB_APP_NAME \
-          --deployment-container-image-name ""
+          --runtime "DOTNETCORE|3.1"  # Temporary runtime, to create the app as a Linux web app.
 
     # Set Docker Image for the Web App
     - name: Set Docker Image for the Web App
