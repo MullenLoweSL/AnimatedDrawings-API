@@ -65,7 +65,7 @@ jobs:
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
           --name $WEB_APP_NAME \
-          --runtime "DOCKER|"
+          --deployment-container-image-name ""  # Empty image during creation since we're using container config later
 
     - name: Set Docker Image for the Web App
       run: |
