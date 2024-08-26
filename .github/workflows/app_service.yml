@@ -1,0 +1,72 @@
+name: Deploy to Azure App Service Web App
+
+# Trigger manually through workflow dispatch
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    env:
+      # Declare your resource group, service plan, app name, and docker image as variables
+      RESOURCE_GROUP: atlas
+      APP_SERVICE_PLAN: animated-drawings-app-service-plan
+      WEB_APP_NAME: animated-drawings-webapp-api
+      SKU: P3v2
+      IS_LINUX: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Check if App Service Plan Exists
+      id: check-app-service-plan
+      run: |
+        az appservice plan show --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP || echo "NotFound" > result.txt
+      continue-on-error: true
+
+    - name: Create App Service Plan if Not Found
+      if: ${{ steps.check-app-service-plan.outputs.result == 'NotFound' }}
+      run: |
+        echo "App Service Plan does not exist. Creating..."
+        az appservice plan create \
+          --name $APP_SERVICE_PLAN \
+          --resource-group $RESOURCE_GROUP \
+          --sku $SKU \
+          --is-linux
+
+    - name: Check if Web App Exists
+      id: check-web-app
+      run: |
+        az webapp show --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || echo "NotFound" > result.txt
+      continue-on-error: true
+
+    - name: Delete Web App if Exists
+      if: ${{ steps.check-web-app.outputs.result != 'NotFound' }}
+      run: |
+        echo "Web App exists. Deleting..."
+        az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
+    
+    - name: Create Web App with Docker Image
+      run: |
+        az webapp create \
+          --resource-group $RESOURCE_GROUP \
+          --plan $APP_SERVICE_PLAN \
+          --name $WEB_APP_NAME \
+          --deployment-container-image-name sdharmarajah/animated-drawings:latest
+    
+    - name: Set Docker Image for the Web App
+      run: |
+        az webapp config container set \
+          --name $WEB_APP_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --docker-custom-image-name sdharmarajah/animated-drawings:latest \
+          --docker-registry-server-url https://index.docker.io \
+          --registry-username ${{ secrets.DOCKERHUB_USERNAME }} \
+          --registry-password ${{ secrets.DOCKERHUB_PASSWORD }}
