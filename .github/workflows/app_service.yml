@@ -9,7 +9,7 @@ jobs:
 
     env:
       RESOURCE_GROUP: atlas
-      WEB_APP_NAME: animated-drawings-webapp-api
+      WEB_APP_NAME: animated-drawings-webapp-api-v2
 
     steps:
     - name: Checkout code
