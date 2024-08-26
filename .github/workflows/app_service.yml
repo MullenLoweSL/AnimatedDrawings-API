@@ -65,8 +65,7 @@ jobs:
         az webapp create \
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
-          --name $WEB_APP_NAME \
-          --os-type Linux  # Ensure it's Linux-based since it's for containers
+          --name $WEB_APP_NAME
 
     # Set Docker Image for the Web App
     - name: Set Docker Image for the Web App
