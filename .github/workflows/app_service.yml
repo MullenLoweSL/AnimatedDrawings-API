@@ -62,15 +62,14 @@ jobs:
         echo "Web App exists. Deleting..."
         az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
     
-    # Create Web App without specifying container at creation time
+    # Create Web App
     - name: Create Web App
       run: |
         echo "Creating Web App..."
         az webapp create \
           --resource-group $RESOURCE_GROUP \
           --plan $APP_SERVICE_PLAN \
-          --name $WEB_APP_NAME \
-          --os-type Linux  # Specifying the OS type without using the deprecated runtime flag
+          --name $WEB_APP_NAME
 
     # Set Docker Image for the Web App
     - name: Set Docker Image for the Web App
