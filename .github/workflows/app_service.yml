@@ -1,18 +1,15 @@
-name: Deploy to Azure App Service Web App
+name: Overwrite Azure Web App with New Docker Container
 
-# Trigger manually through workflow dispatch
 on:
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     env:
       RESOURCE_GROUP: atlas
-      APP_SERVICE_PLAN: animated-drawings-app-service-plan
       WEB_APP_NAME: animated-drawings-webapp-api
-      SKU: P3v2
 
     steps:
     - name: Checkout code
@@ -23,51 +20,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Check if App Service Plan Exists
-    - name: Check if App Service Plan Exists
-      id: check-app-service-plan
-      run: |
-        if az appservice plan show --name $APP_SERVICE_PLAN --resource-group $RESOURCE_GROUP 2>/dev/null; then
-          echo "app_service_plan_exists=true" >> $GITHUB_ENV
-        else
-          echo "app_service_plan_exists=false" >> $GITHUB_ENV
-        fi
-
-    # Create App Service Plan if Not Found
-    - name: Create App Service Plan if Not Found
-      if: ${{ env.app_service_plan_exists == 'false' }}
-      run: |
-        az appservice plan create \
-          --name $APP_SERVICE_PLAN \
-          --resource-group $RESOURCE_GROUP \
-          --sku $SKU \
-          --is-linux
-
-    # Check if Web App Exists
-    - name: Check if Web App Exists
-      id: check-web-app
-      run: |
-        if az webapp show --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP 2>/dev/null; then
-          echo "web_app_exists=true" >> $GITHUB_ENV
-        else
-          echo "web_app_exists=false" >> $GITHUB_ENV
-        fi
-
-    # Delete Web App if Exists
-    - name: Delete Web App if Exists
-      if: ${{ env.web_app_exists == 'true' }}
-      run: |
-        az webapp delete --name $WEB_APP_NAME --resource-group $RESOURCE_GROUP || true
-    
-    # Create Web App without specifying any runtime or container settings
-    - name: Create Web App
-      run: |
-        az webapp create \
-          --resource-group $RESOURCE_GROUP \
-          --plan $APP_SERVICE_PLAN \
-          --name $WEB_APP_NAME
-
-    # Set Docker Image for the Web App
+    # Set Docker Image for the Web App (Overwriting existing deployment)
     - name: Set Docker Image for the Web App
       run: |
         az webapp config container set \
