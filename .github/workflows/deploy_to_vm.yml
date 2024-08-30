@@ -23,6 +23,40 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Check and Delete Existing Resources
+      run: |
+        if az vm show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.VM_NAME }} &> /dev/null; then
+          echo "Deleting existing VM..."
+          az vm delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.VM_NAME }} --yes
+        fi
+
+        if az network nic show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}VMNic &> /dev/null; then
+          echo "Deleting existing Network Interface..."
+          az network nic delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}VMNic
+        fi
+
+        if az network nsg show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}-nsg &> /dev/null; then
+          echo "Deleting existing Network Security Group..."
+          az network nsg delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}-nsg
+        fi
+
+        if az network public-ip show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}PublicIP &> /dev/null; then
+          echo "Deleting existing Public IP..."
+          az network public-ip delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}PublicIP
+        fi
+
+        if az network vnet show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}VNET &> /dev/null; then
+          echo "Deleting existing Virtual Network..."
+          az network vnet delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${VM_NAME}VNET
+        fi
+
+        echo "Checking for orphaned disks..."
+        ORPHANED_DISKS=$(az disk list --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query "[?tags.VMName=='${VM_NAME}'].id" -o tsv)
+        for DISK in $ORPHANED_DISKS; do
+          echo "Deleting orphaned disk: $DISK"
+          az disk delete --ids $DISK --yes
+        done
 
     - name: Create Azure VM
       env:
@@ -36,20 +70,20 @@ jobs:
           --admin-username azureuser \
           --ssh-key-values "$SSH_PUBLIC_KEY" \
           --public-ip-sku Standard \
-          --public-ip-address-allocation static
+          --public-ip-address-allocation static \
+          --vnet-name ${VM_NAME}VNET \
+          --nsg ${VM_NAME}-nsg \
+          --tags VMName=${VM_NAME}
+
 
     - name: Configure Network Security Group
       run: |
-        az network nsg create \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --name ${VM_NAME}-nsg
-
         az network nsg rule create \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --nsg-name ${VM_NAME}-nsg \
           --name AllowAPI \
           --protocol tcp \
-          --priority 1000 \
+          --priority 1001 \
           --destination-port-range ${{ env.API_PORT }} \
           --access Allow
 
