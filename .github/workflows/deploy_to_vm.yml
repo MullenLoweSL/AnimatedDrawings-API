@@ -1,0 +1,112 @@
+name: Deploy to Azure VM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-to-azure:
+    runs-on: ubuntu-latest
+
+    env:
+      AZURE_RESOURCE_GROUP: test-vm
+      VM_NAME: myVM
+      DOCKER_IMAGE: sdharmarajah/animated-drawings:latest
+      API_PORT: 8080
+      DOMAIN_NAME: mydomain.com
+      VM_SIZE: Standard_D4s_v3
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Create Azure VM
+      env:
+        SSH_PUBLIC_KEY: ${{ secrets.AZURE_VM_SSH_PUBLIC_KEY }}
+      run: |
+        az vm create \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.VM_NAME }} \
+          --image Ubuntu2204 \
+          --size ${{ env.VM_SIZE }} \
+          --admin-username azureuser \
+          --ssh-key-values "$SSH_PUBLIC_KEY" \
+          --public-ip-sku Standard \
+          --public-ip-address-allocation static
+
+    - name: Configure Network Security Group
+      run: |
+        az network nsg create \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${VM_NAME}-nsg
+
+        az network nsg rule create \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --nsg-name ${VM_NAME}-nsg \
+          --name AllowAPI \
+          --protocol tcp \
+          --priority 1000 \
+          --destination-port-range ${{ env.API_PORT }} \
+          --access Allow
+
+        az network nic update \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${VM_NAME}VMNic \
+          --network-security-group ${VM_NAME}-nsg
+
+    - name: Install Docker on VM
+      run: |
+        az vm run-command invoke \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.VM_NAME }} \
+          --command-id RunShellScript \
+          --scripts "
+            #!/bin/bash
+            set -e
+            # Update package list
+            sudo apt-get update
+            # Install prerequisites
+            sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+            # Add Docker's official GPG key
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+            # Add Docker repository
+            sudo add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"
+            # Update package list (again)
+            sudo apt-get update
+            # Install Docker
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+            # Add current user to docker group
+            sudo usermod -aG docker $USER
+            # Start and enable Docker service
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            # Verify Docker installation
+            docker --version
+          "
+
+    - name: Deploy Docker image on VM
+      run: |
+        az vm run-command invoke \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.VM_NAME }} \
+          --command-id RunShellScript \
+          --scripts "docker run -d -p ${{ env.API_PORT }}:${{ env.API_PORT }} ${{ env.DOCKER_IMAGE }}"
+
+    - name: Get Public IP
+      run: |
+        PUBLIC_IP=$(az vm show \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.VM_NAME }} \
+          --show-details \
+          --query publicIps \
+          --output tsv)
+        echo "Public IP: $PUBLIC_IP"
+        echo "public_ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
+
+    - name: Output DNS instructions
+      run: |
+        echo "Use your DNS provider's interface or API to point ${{ env.DOMAIN_NAME }} to ${{ steps.get_ip.outputs.public_ip }}"
