@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, request, jsonify, send_from_directory
 import os
 from examples.image_to_animation import image_to_animation
-from moviepy.editor import VideoFileClip, AudioFileClip
+from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, CompositeVideoClip
 
 app = Flask(__name__)
 
@@ -50,6 +50,28 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
+
+def overlay_images_on_video(video_path, img1_path, img2_path, output_path):
+    # Load the video
+    video_clip = VideoFileClip(video_path)
+    video_width = video_clip.w
+    video_height = video_clip.h
+
+    # Load and scale the first image
+    img1_clip = ImageClip(img1_path).resize(width=video_width)
+    img1_clip = img1_clip.set_position(("center", "bottom")).set_duration(video_clip.duration)
+
+    # Load and scale the second image
+    img2_clip = ImageClip(img2_path).resize(width=video_width)
+    img2_clip = img2_clip.set_position(("center", "top")).set_duration(video_clip.duration)
+
+    # Overlay the images on the video using CompositeVideoClip
+    final_clip = CompositeVideoClip([video_clip, img1_clip, img2_clip])
+
+    # Write the result to a file
+    final_clip.write_videofile(output_path, codec="libx264")
+
+    return output_path
 
 @app.route("/image_to_animation", methods=["POST"])
 def upload_file():
@@ -107,13 +129,20 @@ def upload_file():
             # Load video and audio files
             audio_clip = AudioFileClip(audio_path)
 
-
         video_path = f"uploads/{folder_name}/" + "video.mp4"
         output_path = f"uploads/{folder_name}/" + "video_web.mp4"
         video_clip = VideoFileClip(video_path)
         new_video_clip = video_clip.set_audio(audio_clip)
         new_video_clip.write_videofile(output_path)
-        url = request.url_root + output_path
+
+        # Edits for BMICH launch event
+        # Overlay images on the video
+        img1_path = "watermark/bottom.png"  # Replace with actual path
+        img2_path = "watermark/top.png"  # Replace with actual path
+        final_output_path = f"uploads/{folder_name}/" + "final_video.mp4"
+        overlay_images_on_video(output_path, img1_path, img2_path, final_output_path)
+
+        url = request.url_root + final_output_path
         os.remove(img_file_path)
         return jsonify({"message": "hello world", "url": url})
 
