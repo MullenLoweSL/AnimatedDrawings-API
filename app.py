@@ -17,21 +17,27 @@ os.makedirs(BG_IMAGES_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 audio_mapper = {
-    0: "advertising.mp3",
-    1: "classical.mp3",
-    2: "emotional.mp3",
-    3: "funk.mp3",
-    4: "sport.mp3"
+    0: "space1.mp3",
+    1: "space2.mp3",
+    2: "space3.mp3",
+    3: "advertising.mp3",
+    4: "classical.mp3",
+    5: "emotional.mp3",
+    6: "funk.mp3",
+    7: "sport.mp3",
 }
 
 background_mapper = {
-    0: "beach.png",
-    1: "castle.png",
-    2: "desert.png",
-    3: "forest.png",
-    4: "house.png",
-    5: "snow.png",
-    6: "space.png"
+    0: "space1.png",
+    1: "space2.png",
+    2: "space3.png",
+    3: "beach.png",
+    4: "castle.png",
+    5: "desert.png",
+    6: "forest.png",
+    7: "house.png",
+    8: "snow.png",
+    9: "space.png"
 }
 
 motion_mapper = {
