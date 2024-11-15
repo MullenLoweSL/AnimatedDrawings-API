@@ -1,0 +1,14 @@
+
+# YAML configuration for generating a walking animation GIF
+
+filepath: examples/bvh/cmu1/walking_extended.bvh    # Path to the extended BVH file for walking animation
+start_frame_idx: 0                             # Starting frame index
+end_frame_idx: 450                             # Ending frame index for 15 seconds
+groundplane_joint: LeftAnkle                   # Joint to anchor to ground
+forward_perp_joint_vectors:
+  - - LeftShoulder
+    - RightShoulder
+  - - LeftHip
+    - RightHip
+scale: 0.025                                   # Scale of the animation
+up: +y                                         # Orientation of the up axis

@@ -1,0 +1,39 @@
+frames:
+- joints:
+    left_arm: support
+    left_leg: start_swing
+    right_arm: lift
+    right_leg: lift
+  time: 0
+- joints:
+    left_arm: support
+    left_leg: swing_over
+    right_arm: lift
+    right_leg: airborne
+  time: 0.5
+- joints:
+    left_arm: mid_air
+    left_leg: over_body
+    right_arm: support
+    right_leg: swing_over
+  time: 1
+- joints:
+    left_arm: airborne
+    left_leg: landing_prep
+    right_arm: support
+    right_leg: over_body
+  time: 1.5
+- joints:
+    left_arm: lift
+    left_leg: land
+    right_arm: support
+    right_leg: swing_to_stand
+  time: 2
+- joints:
+    left_arm: down
+    left_leg: stand
+    right_arm: down
+    right_leg: stand
+  time: 2.5
+loop: false
+speed: 0.8

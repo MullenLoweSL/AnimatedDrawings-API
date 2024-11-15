@@ -46,7 +46,10 @@ motion_mapper = {
     2: "examples/config/motion/jumping_jacks.yaml",
     3: "examples/config/motion/jumping.yaml",
     4: "examples/config/motion/wave_hello.yaml",
-    5: "examples/config/motion/zombie.yaml"
+    5: "examples/config/motion/zombie.yaml",
+    6: "examples/config/motion/jumping_jacks.yaml",
+    7: "examples/config/motion/walking.yaml",
+    8: "examples/config/motion/cartwheels.yaml",
 }
 
 # Function to check if a file is allowed
