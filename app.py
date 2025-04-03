@@ -60,9 +60,14 @@ def allowed_file(filename):
     )
 
 
-def overlay_images_on_video(video_path, img1_path, img2_path, output_path):
+def overlay_images_on_video(video_path, img1_path, img2_path, output_path, max_duration=None):
     # Load the video
     video_clip = VideoFileClip(video_path)
+    
+    # Trim the video if max_duration is provided
+    if max_duration:
+        video_clip = video_clip.subclip(0, min(max_duration, video_clip.duration))
+    
     video_width = video_clip.w
     video_height = video_clip.h
 
@@ -149,7 +154,10 @@ def upload_file():
         img1_path = "watermark/bottom.png"  # Replace with actual path
         img2_path = "watermark/top.png"  # Replace with actual path
         final_output_path = f"uploads/{folder_name}/" + "final_video.mp4"
-        overlay_images_on_video(output_path, img1_path, img2_path, final_output_path)
+
+        # generate the final video with overlays
+        max_duration = 10  # Set the maximum duration in seconds
+        overlay_images_on_video(output_path, img1_path, img2_path, final_output_path, max_duration)
 
         url = request.url_root + final_output_path
         os.remove(img_file_path)
