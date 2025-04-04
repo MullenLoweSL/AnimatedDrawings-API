@@ -82,8 +82,8 @@ def overlay_images_on_video(video_path, img1_path, img2_path, output_path, max_d
     # Overlay the images on the video using CompositeVideoClip
     final_clip = CompositeVideoClip([video_clip, img1_clip, img2_clip])
 
-    # Write the result to a .mov file
-    final_clip.write_videofile(output_path, codec="prores", preset="4444")
+    # Write the result to a file
+    final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
     return output_path
 
@@ -153,7 +153,7 @@ def upload_file():
         # Overlay images on the video
         img1_path = "watermark/bottom.png"  # Replace with actual path
         img2_path = "watermark/top.png"  # Replace with actual path
-        final_output_path = f"uploads/{folder_name}/" + "final_video.mov"
+        final_output_path = f"uploads/{folder_name}/" + "final_video.mp4"
 
         # generate the final video with overlays
         max_duration = 10  # Set the maximum duration in seconds
