@@ -171,6 +171,36 @@ def upload_file():
         return jsonify({"error": str(e)})
 
 
+@app.route("/background_mapper", methods=["GET"])
+def get_background_mapper():
+    return jsonify(background_mapper)
+
+
+@app.route("/bg_images", methods=["GET"])
+def get_bg_images():
+    try:
+        # Get all PNG files in the bg_images directory
+        bg_images = []
+        if os.path.exists(BG_IMAGES_FOLDER):
+            for filename in os.listdir(BG_IMAGES_FOLDER):
+                if filename.lower().endswith('.png'):
+                    file_path = os.path.join(BG_IMAGES_FOLDER, filename)
+                    if os.path.isfile(file_path):
+                        bg_images.append({
+                            "filename": filename,
+                            "path": f"uploads/bg_images/{filename}",
+                            "url": request.url_root + f"uploads/bg_images/{filename}"
+                        })
+        
+        return jsonify({
+            "total_count": len(bg_images),
+            "bg_images": bg_images
+        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route("/uploads/<foldername>/<filename>", methods=["GET"])
 def render_file(foldername, filename):
     return send_from_directory(
