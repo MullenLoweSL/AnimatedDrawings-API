@@ -37,7 +37,11 @@ background_mapper = {
     6: "forest.png",
     7: "house.png",
     8: "snow.png",
-    9: "space.png"
+    9: "space.png",
+    10: "dilan-1.png",
+    11: "dilan-2.png",
+    12: "dilan-3.png",
+    13: "dilan-4.png"
 }
 
 motion_mapper = {
